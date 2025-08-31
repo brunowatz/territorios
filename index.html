@@ -204,34 +204,34 @@
       document.getElementById("observacoes").value = localStorage.getItem(`obs_${id}`) || "";
     }
 
-   function salvarInfo() {
-  const id = territorios.find(x => x.nome === document.getElementById("territorioTitle").innerText).id;
-  const nome = document.getElementById("territorioTitle").innerText;
-  const dataVisita = document.getElementById("dataVisita").value;
-  const dirigente = document.getElementById("dirigente").value;
-  const observacoes = document.getElementById("observacoes").value;
+function salvarInfo() {
+  const territorioAtual = territorios.find(x => x.nome === document.getElementById("territorioTitle").innerText);
 
-  // Salvar local
-  localStorage.setItem(`data_${id}`, dataVisita);
-  localStorage.setItem(`dirigente_${id}`, dirigente);
-  localStorage.setItem(`obs_${id}`, observacoes);
+  const payload = {
+    territorio: territorioAtual.id,
+    territorioNome: territorioAtual.nome, // Novo campo com o nome
+    dataVisita: document.getElementById("dataVisita").value,
+    dirigente: document.getElementById("dirigente").value,
+    observacoes: document.getElementById("observacoes").value
+  };
 
-  // Enviar para Google Sheets
-  fetch("https://script.google.com/macros/s/AKfycbxw6SlWv4h3Ddmnfy8P8tFrtRWTaIl1JMYy9AeWxqU0u0wexPGQCvJf0cjtXINAC99a/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyU0kHYCCX5O0hAY1Cb-uB60nYyJ4zBK2V2a3zMY67qEjWz01IAgXb9GsxTVJyLKwy5/exec", {
     method: "POST",
-    mode: "no-cors",
+    mode: "cors",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: id,
-      territorio: nome,
-      dataVisita: dataVisita,
-      dirigente: dirigente,
-      observacoes: observacoes
-    })
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    alert(data.message);
+  })
+  .catch(err => {
+    console.error("Erro:", err);
+    alert("Erro ao salvar, veja o console.");
   });
-
-  alert("Informações salvas e enviadas para a planilha!");
 }
+
+
 
 
     function voltar() {
